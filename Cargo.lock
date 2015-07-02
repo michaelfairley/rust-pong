@@ -2,7 +2,6 @@
 name = "pong"
 version = "0.1.0"
 dependencies = [
- "pkg-config 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "sdl2 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "sdl2_ttf 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -25,11 +24,6 @@ dependencies = [
  "rand 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
-
-[[package]]
-name = "pkg-config"
-version = "0.3.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rand"

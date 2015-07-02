@@ -45,6 +45,11 @@ fn main() {
 
       match event {
         Event::Quit {..} | Event::KeyDown { keycode: KeyCode::Escape, .. } => running = false,
+        Event::KeyDown { keycode: KeyCode::R, ..} => {
+          left_paddle = Paddle::new(Side::Left);
+          right_paddle = Paddle::new(Side::Right);
+          ball = Ball::new();
+        }
         _ => {}
       }
     }
@@ -67,6 +72,8 @@ fn main() {
       }
     }
 
+    ball.mov();
+
     let ticks_for_last_ten_frames = last_eleven_ticks.head() - last_eleven_ticks.tail();
     let fps_over_last_ten_frames = 10000 / ticks_for_last_ten_frames;
 
@@ -84,6 +91,7 @@ fn main() {
     drawer.set_draw_color(sdl2::pixels::Color::RGB(0xff, 0xff, 0xff));
     drawer.fill_rect(left_paddle.to_sdl());
     drawer.fill_rect(right_paddle.to_sdl());
+    drawer.fill_rect(ball.to_sdl());
 
     drawer.copy(&fps_texture, None, Some(sdl2::rect::Rect{x: 10, y: 10, w: fps_surface.get_width() as i32, h: time_surface.get_height() as i32}));
     drawer.copy(&time_texture, None, Some(sdl2::rect::Rect{x: 10, y: 25, w: time_surface.get_width() as i32, h: time_surface.get_height() as i32}));
