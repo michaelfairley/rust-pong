@@ -22,7 +22,7 @@ fn main() {
     .build()
     .unwrap();
 
-  let mut renderer = window.renderer().build().unwrap();
+  let mut renderer = window.renderer().present_vsync().build().unwrap();
 
   let mut running = true;
 
