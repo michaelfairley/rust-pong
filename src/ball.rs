@@ -1,4 +1,7 @@
 extern crate sdl2;
+extern crate rand;
+
+use self::rand::{thread_rng,Rng};
 
 use std::f64::consts::PI;
 
@@ -13,21 +16,22 @@ pub struct Ball {
 
 impl Ball {
   pub fn new() -> Ball {
-    Ball{x: (super::WIDTH as f64) / 2.0, y: (super::HEIGHT as f64) / 2.0, speed: 4.0, angle: PI / 4.0}
+    let angle: f64 = thread_rng().gen_range(PI / -4.0, PI / 4.0) + (if thread_rng().gen() { 0.0 } else { PI });
+    Ball{x: (super::WIDTH as f64) / 2.0, y: (super::HEIGHT as f64) / 2.0, speed: 4.0, angle: angle}
   }
 
   pub fn mov(&mut self) {
-    let (dx, dy) = self.angle.sin_cos();
-    let (dx, dy) = (dx * self.speed, dy * self.speed);
+    let (dy, dx) = self.angle.sin_cos();
+    let (dy, dx) = (dy * self.speed, dx * self.speed);
 
     self.x += dx;
     self.y += dy;
     if self.y < 0.0 {
       self.y = -self.y;
-      self.angle = (dy).atan2(-dx);
+      self.angle = (-dy).atan2(dx);
     } else if self.y > super::HEIGHT as f64{
       self.y -= self.y - (super::HEIGHT as f64);
-      self.angle = (dy).atan2(-dx);
+      self.angle = (-dy).atan2(dx);
     }
   }
 

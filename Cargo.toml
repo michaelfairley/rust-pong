@@ -6,3 +6,4 @@ authors = ["Michael Fairley <michaelfairley@gmail.com>"]
 [dependencies]
 sdl2 = "0.4"
 sdl2_ttf = "0.4.0"
+rand = "0.3"
