@@ -36,11 +36,11 @@ impl Ball {
   }
 
   pub fn to_sdl(&self) -> sdl2::rect::Rect {
-    sdl2::rect::Rect{
-      x: (self.x - SIZE/2.0) as i32,
-      y: (self.y - SIZE/2.0) as i32,
-      w: SIZE as i32,
-      h: SIZE as i32,
-    }
+    sdl2::rect::Rect::new_unwrap(
+      (self.x - SIZE/2.0) as i32,
+      (self.y - SIZE/2.0) as i32,
+      SIZE as u32,
+      SIZE as u32,
+    )
   }
 }

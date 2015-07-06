@@ -10,8 +10,8 @@ pub mod ball;
 use ball::*;
 
 static MS_PER_FRAME : u32 = 16;
-const WIDTH : i32 = 640;
-const HEIGHT : i32 = 480;
+const WIDTH : u32 = 640;
+const HEIGHT : u32 = 480;
 
 fn main() {
   let mut sdl_context = sdl2::init().video().unwrap();
@@ -41,11 +41,11 @@ fn main() {
     last_eleven_ticks.push(frame_start);
     for event in sdl_context.event_pump().poll_iter() {
       use sdl2::event::Event;
-      use sdl2::keycode::KeyCode;
+      use sdl2::keyboard::Keycode;
 
       match event {
-        Event::Quit {..} | Event::KeyDown { keycode: KeyCode::Escape, .. } => running = false,
-        Event::KeyDown { keycode: KeyCode::R, ..} => {
+        Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => running = false,
+        Event::KeyDown { keycode: Some(Keycode::R), ..} => {
           left_paddle = Paddle::new(Side::Left);
           right_paddle = Paddle::new(Side::Right);
           ball = Ball::new();
@@ -55,19 +55,19 @@ fn main() {
     }
 
     {
-      use sdl2::scancode::ScanCode;
+      use sdl2::keyboard::Scancode;
 
-      let keystates = sdl2::keyboard::get_keyboard_state();
-      if keystates[&ScanCode::S] || keystates[&ScanCode::D] {
+      let keystates = sdl_context.keyboard_state();
+      if keystates.is_scancode_pressed(Scancode::S) || keystates.is_scancode_pressed(Scancode::D) {
         left_paddle.move_down();
       }
-      if keystates[&ScanCode::W] || keystates[&ScanCode::E]  {
+      if keystates.is_scancode_pressed(Scancode::W) || keystates.is_scancode_pressed(Scancode::E)  {
         left_paddle.move_up();
       }
-      if keystates[&ScanCode::K] || keystates[&ScanCode::Down] {
+      if keystates.is_scancode_pressed(Scancode::K) || keystates.is_scancode_pressed(Scancode::Down) {
         right_paddle.move_down();
       }
-      if keystates[&ScanCode::I] || keystates[&ScanCode::Up]  {
+      if keystates.is_scancode_pressed(Scancode::I) || keystates.is_scancode_pressed(Scancode::Up)  {
         right_paddle.move_up();
       }
     }
@@ -77,26 +77,29 @@ fn main() {
     let ticks_for_last_ten_frames = last_eleven_ticks.head() - last_eleven_ticks.tail();
     let fps_over_last_ten_frames = 10000 / ticks_for_last_ten_frames;
 
-    let fps_surface = font.render_str_solid(&format!("{} fps", fps_over_last_ten_frames), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
-    let fps_texture = renderer.create_texture_from_surface(&fps_surface).unwrap();
+    renderer.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+    renderer.clear();
 
-    let time_surface = font.render_str_solid(&format!("{} ms", previous_frame_length), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
-    let time_texture = renderer.create_texture_from_surface(&time_surface).unwrap();
+    renderer.set_draw_color(sdl2::pixels::Color::RGB(0xff, 0xff, 0xff));
+    renderer.fill_rect(left_paddle.to_sdl());
+    renderer.fill_rect(right_paddle.to_sdl());
+    renderer.fill_rect(ball.to_sdl());
 
-    let mut drawer = renderer.drawer();
+    {
+      let fps_surface = font.render_str_solid(&format!("{} fps", fps_over_last_ten_frames), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
+      let fps_texture = renderer.create_texture_from_surface(&fps_surface).unwrap();
+      renderer.copy(&fps_texture, None, Some(sdl2::rect::Rect::new_unwrap(10, 10, fps_surface.get_width(), fps_surface.get_height())));
+    }
 
-    drawer.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-    drawer.clear();
+    {
+      let time_surface = font.render_str_solid(&format!("{} ms", previous_frame_length), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
+      let time_texture = renderer.create_texture_from_surface(&time_surface).unwrap();
+      renderer.copy(&time_texture, None, Some(sdl2::rect::Rect::new_unwrap(10, 25, time_surface.get_width(), time_surface.get_height())));
+    }
 
-    drawer.set_draw_color(sdl2::pixels::Color::RGB(0xff, 0xff, 0xff));
-    drawer.fill_rect(left_paddle.to_sdl());
-    drawer.fill_rect(right_paddle.to_sdl());
-    drawer.fill_rect(ball.to_sdl());
 
-    drawer.copy(&fps_texture, None, Some(sdl2::rect::Rect{x: 10, y: 10, w: fps_surface.get_width() as i32, h: time_surface.get_height() as i32}));
-    drawer.copy(&time_texture, None, Some(sdl2::rect::Rect{x: 10, y: 25, w: time_surface.get_width() as i32, h: time_surface.get_height() as i32}));
 
-    drawer.present();
+    renderer.present();
 
     let frame_end = sdl2::timer::get_ticks();
     let frame_length = frame_end - frame_start;

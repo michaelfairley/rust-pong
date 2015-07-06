@@ -1,8 +1,8 @@
 extern crate sdl2;
 
 const SPEED: f64 = 5.0;
-const WIDTH: i32 = 15;
-const HEIGHT: i32 = 80;
+const WIDTH: f64 = 15.0;
+const HEIGHT: f64 = 80.0;
 
 pub enum Side {
   Left,
@@ -16,7 +16,7 @@ pub struct Paddle {
 
 impl Paddle {
   pub fn new(side: Side) -> Paddle {
-    Paddle{side: side, y: (super::HEIGHT/2 - HEIGHT/2) as f64}
+    Paddle{side: side, y: ((super::HEIGHT/2) as f64 - HEIGHT/2.0) as f64}
   }
 
   pub fn move_down(&mut self) {
@@ -30,14 +30,14 @@ impl Paddle {
   pub fn to_sdl(&self) -> sdl2::rect::Rect {
     let x = match self.side {
       Side::Left => WIDTH,
-      Side::Right => super::WIDTH - WIDTH*2,
+      Side::Right => super::WIDTH as f64 - WIDTH*2.0,
     };
 
-    sdl2::rect::Rect{
-      x: x,
-      y: self.y as i32 - HEIGHT/2,
-      w: WIDTH,
-      h: HEIGHT,
-    }
+    sdl2::rect::Rect::new_unwrap(
+      x as i32,
+      (self.y - HEIGHT/2.0) as i32,
+      WIDTH as u32,
+      HEIGHT as u32,
+    )
   }
 }
