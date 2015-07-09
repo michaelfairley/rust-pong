@@ -28,7 +28,11 @@ fn main() {
 
   let mut left_paddle = Paddle::new(Side::Left);
   let mut right_paddle = Paddle::new(Side::Right);
+
   let mut ball = Ball::new();
+
+  let mut left_score = 0;
+  let mut right_score = 0;
 
   let mut previous_frame_length = 0;
 
@@ -73,6 +77,13 @@ fn main() {
     }
 
     ball.mov();
+    if ball.off_left_edge() {
+      right_score += 1;
+      ball = Ball::new();
+    } else if ball.off_right_edge() {
+      left_score += 1;
+      ball = Ball::new();
+    }
 
     let ticks_for_last_ten_frames = last_eleven_ticks.head() - last_eleven_ticks.tail();
     let fps_over_last_ten_frames = 10000 / ticks_for_last_ten_frames;
@@ -97,7 +108,17 @@ fn main() {
       renderer.copy(&time_texture, None, Some(sdl2::rect::Rect::new_unwrap(10, 25, time_surface.get_width(), time_surface.get_height())));
     }
 
+    {
+      let left_score_surface = font.render_str_solid(&format!("{}", left_score), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
+      let left_score_texture = renderer.create_texture_from_surface(&left_score_surface).unwrap();
+      renderer.copy(&left_score_texture, None, Some(sdl2::rect::Rect::new_unwrap((WIDTH/2 - left_score_surface.get_width() - 10) as i32, 25, left_score_surface.get_width(), left_score_surface.get_height())));
+    }
 
+    {
+      let right_score_surface = font.render_str_solid(&format!("{}", right_score), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
+      let right_score_texture = renderer.create_texture_from_surface(&right_score_surface).unwrap();
+      renderer.copy(&right_score_texture, None, Some(sdl2::rect::Rect::new_unwrap((WIDTH / 2 + 10) as i32, 25, right_score_surface.get_width(), right_score_surface.get_height())));
+    }
 
     renderer.present();
 

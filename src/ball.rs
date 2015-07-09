@@ -43,4 +43,12 @@ impl Ball {
       SIZE as u32,
     )
   }
+
+  pub fn off_left_edge(&self) -> bool {
+    self.x < 0.0
+  }
+
+  pub fn off_right_edge(&self) -> bool {
+    self.x > super::WIDTH as f64
+  }
 }
