@@ -1,8 +1,8 @@
 extern crate sdl2;
 
 const SPEED: f64 = 5.0;
-const WIDTH: f64 = 15.0;
-const HEIGHT: f64 = 80.0;
+pub const WIDTH: f64 = 15.0;
+pub const HEIGHT: f64 = 80.0;
 
 pub enum Side {
   Left,

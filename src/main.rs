@@ -5,7 +5,6 @@ use std::path::Path;
 
 pub mod ring;
 pub mod paddle;
-use paddle::*;
 pub mod ball;
 use ball::*;
 
@@ -26,8 +25,8 @@ fn main() {
 
   let mut running = true;
 
-  let mut left_paddle = Paddle::new(Side::Left);
-  let mut right_paddle = Paddle::new(Side::Right);
+  let mut left_paddle = paddle::Paddle::new(paddle::Side::Left);
+  let mut right_paddle = paddle::Paddle::new(paddle::Side::Right);
 
   let mut ball = Ball::new();
 
@@ -50,8 +49,8 @@ fn main() {
       match event {
         Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => running = false,
         Event::KeyDown { keycode: Some(Keycode::R), ..} => {
-          left_paddle = Paddle::new(Side::Left);
-          right_paddle = Paddle::new(Side::Right);
+          left_paddle = paddle::Paddle::new(paddle::Side::Left);
+          right_paddle = paddle::Paddle::new(paddle::Side::Right);
           ball = Ball::new();
         }
         _ => {}
@@ -84,6 +83,9 @@ fn main() {
       left_score += 1;
       ball = Ball::new();
     }
+
+    ball.maybe_bounce_off(&left_paddle);
+    ball.maybe_bounce_off(&right_paddle);
 
     let ticks_for_last_ten_frames = last_eleven_ticks.head() - last_eleven_ticks.tail();
     let fps_over_last_ten_frames = 10000 / ticks_for_last_ten_frames;

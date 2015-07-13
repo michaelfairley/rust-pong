@@ -51,4 +51,18 @@ impl Ball {
   pub fn off_right_edge(&self) -> bool {
     self.x > super::WIDTH as f64
   }
+
+  pub fn maybe_bounce_off(&mut self, paddle: &super::paddle::Paddle) {
+    if self.intersecting(paddle) {
+      let (dy, dx) = self.angle.sin_cos();
+      let paddle_ratio = (self.y - paddle.y) / super::paddle::HEIGHT;
+      let angle = paddle_ratio * PI/1.5;
+      self.angle = angle;
+      if dx > 0.0 { self.angle = -self.angle + PI; }
+    }
+  }
+
+  fn intersecting(&self, paddle: &super::paddle::Paddle) -> bool {
+    self.to_sdl().has_intersection(&paddle.to_sdl())
+  }
 }
