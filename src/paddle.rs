@@ -21,10 +21,16 @@ impl Paddle {
 
   pub fn move_down(&mut self) {
     self.y += SPEED;
+    if self.y + HEIGHT/2.0 > super::HEIGHT as f64 {
+      self.y = super::HEIGHT as f64 - HEIGHT/2.0;
+    }
   }
 
   pub fn move_up(&mut self) {
     self.y -= SPEED;
+    if self.y - HEIGHT/2.0 < 0.0 {
+      self.y = HEIGHT/2.0;
+    }
   }
 
   pub fn to_sdl(&self) -> sdl2::rect::Rect {
