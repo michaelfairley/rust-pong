@@ -59,6 +59,8 @@ impl Ball {
       let angle = paddle_ratio * PI/1.5;
       self.angle = angle;
       if dx > 0.0 { self.angle = -self.angle + PI; }
+
+      self.speed *= 1.1;
     }
   }
 
