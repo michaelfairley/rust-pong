@@ -54,7 +54,7 @@ impl Ball {
 
   pub fn maybe_bounce_off(&mut self, paddle: &super::paddle::Paddle) {
     if self.intersecting(paddle) {
-      let (dy, dx) = self.angle.sin_cos();
+      let (_dy, dx) = self.angle.sin_cos();
       let paddle_ratio = (self.y - paddle.y) / super::paddle::HEIGHT;
       let angle = paddle_ratio * PI/1.5;
       self.angle = angle;
