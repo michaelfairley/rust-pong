@@ -1,5 +1,3 @@
-Cleanly bounce off edge
-Cleaned bounce off paddle
 Extract FPS stuff
 Framerate independence (and disable vsync)
 Extract text rendering
