@@ -26,30 +26,46 @@ impl Ball {
 
     self.x += dx;
     self.y += dy;
-    if self.y < 0.0 {
-      self.y = -self.y;
+    if self.top() < 0.0 {
+      self.y += (0.0 - self.top());
       self.angle = (-dy).atan2(dx);
-    } else if self.y > super::HEIGHT as f64{
-      self.y -= self.y - (super::HEIGHT as f64);
+    } else if self.bottom() > super::HEIGHT as f64{
+      self.y -= (self.bottom() - super::HEIGHT as f64);
       self.angle = (-dy).atan2(dx);
     }
   }
 
+  fn top(&self) -> f64 {
+    self.y - SIZE/2.0
+  }
+
+  fn bottom(&self) -> f64 {
+    self.y + SIZE/2.0
+  }
+
+  fn left(&self) -> f64 {
+    self.x - SIZE/2.0
+  }
+
+  fn right(&self) -> f64 {
+    self.x + SIZE/2.0
+  }
+
   pub fn to_sdl(&self) -> sdl2::rect::Rect {
     sdl2::rect::Rect::new_unwrap(
-      (self.x - SIZE/2.0) as i32,
-      (self.y - SIZE/2.0) as i32,
+      self.left() as i32,
+      self.top() as i32,
       SIZE as u32,
       SIZE as u32,
     )
   }
 
   pub fn off_left_edge(&self) -> bool {
-    self.x < 0.0
+    self.right() < 0.0
   }
 
   pub fn off_right_edge(&self) -> bool {
-    self.x > super::WIDTH as f64
+    self.left() > super::WIDTH as f64
   }
 
   pub fn maybe_bounce_off(&mut self, paddle: &super::paddle::Paddle) {
