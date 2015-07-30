@@ -84,8 +84,11 @@ fn main() {
       ball = Ball::new();
     }
 
-    ball.maybe_bounce_off(&left_paddle);
-    ball.maybe_bounce_off(&right_paddle);
+    if ball.moving_left() {
+      ball.maybe_bounce_off(&left_paddle);
+    } else {
+      ball.maybe_bounce_off(&right_paddle);
+    }
 
     let ticks_for_last_ten_frames = last_eleven_ticks.head() - last_eleven_ticks.tail();
     let fps_over_last_ten_frames = 10000 / ticks_for_last_ten_frames;

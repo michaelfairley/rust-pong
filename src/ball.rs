@@ -68,6 +68,10 @@ impl Ball {
     self.left() > super::WIDTH as f64
   }
 
+  pub fn moving_left(&self) -> bool {
+    self.angle.cos() < 0.0
+  }
+
   pub fn maybe_bounce_off(&mut self, paddle: &super::paddle::Paddle) {
     if self.intersecting(paddle) {
       let (_dy, dx) = self.angle.sin_cos();
