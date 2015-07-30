@@ -27,10 +27,10 @@ impl Ball {
     self.x += dx;
     self.y += dy;
     if self.top() < 0.0 {
-      self.y += (0.0 - self.top());
+      self.y += 0.0 - self.top();
       self.angle = (-dy).atan2(dx);
-    } else if self.bottom() > super::HEIGHT as f64{
-      self.y -= (self.bottom() - super::HEIGHT as f64);
+    } else if self.bottom() > super::HEIGHT as f64 {
+      self.y -= self.bottom() - super::HEIGHT as f64;
       self.angle = (-dy).atan2(dx);
     }
   }
