@@ -4,6 +4,7 @@ extern crate sdl2_ttf;
 use std::path::Path;
 
 pub mod ring;
+pub mod fps;
 pub mod paddle;
 pub mod ball;
 use ball::*;
@@ -37,11 +38,11 @@ fn main() {
 
   let font = sdl2_ttf::Font::from_file(Path::new("OpenSans-Regular.ttf"), 20).unwrap();
 
-  let mut last_eleven_ticks = ring::Ring::new(11);
+  let mut fps = fps::FPS::new();
 
   while running {
     let frame_start = sdl2::timer::get_ticks();
-    last_eleven_ticks.push(frame_start);
+    fps.tick();
     for event in sdl_context.event_pump().poll_iter() {
       use sdl2::event::Event;
       use sdl2::keyboard::Keycode;
@@ -90,9 +91,6 @@ fn main() {
       ball.maybe_bounce_off(&right_paddle);
     }
 
-    let ticks_for_last_ten_frames = last_eleven_ticks.head() - last_eleven_ticks.tail();
-    let fps_over_last_ten_frames = 10000 / ticks_for_last_ten_frames;
-
     renderer.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
     renderer.clear();
 
@@ -102,7 +100,7 @@ fn main() {
     renderer.fill_rect(ball.to_sdl());
 
     {
-      let fps_surface = font.render_str_solid(&format!("{} fps", fps_over_last_ten_frames), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
+      let fps_surface = font.render_str_solid(&format!("{} fps", fps.average()), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
       let fps_texture = renderer.create_texture_from_surface(&fps_surface).unwrap();
       renderer.copy(&fps_texture, None, Some(sdl2::rect::Rect::new_unwrap(10, 10, fps_surface.get_width(), fps_surface.get_height())));
     }
