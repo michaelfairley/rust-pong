@@ -9,7 +9,6 @@ pub mod paddle;
 pub mod ball;
 use ball::*;
 
-static MS_PER_FRAME : u32 = 16;
 const WIDTH : u32 = 640;
 const HEIGHT : u32 = 480;
 
@@ -34,14 +33,11 @@ fn main() {
   let mut left_score = 0;
   let mut right_score = 0;
 
-  let mut previous_frame_length = 0;
-
   let font = sdl2_ttf::Font::from_file(Path::new("OpenSans-Regular.ttf"), 20).unwrap();
 
   let mut fps = fps::FPS::new();
 
   while running {
-    let frame_start = sdl2::timer::get_ticks();
     fps.tick();
     for event in sdl_context.event_pump().poll_iter() {
       use sdl2::event::Event;
@@ -106,12 +102,6 @@ fn main() {
     }
 
     {
-      let time_surface = font.render_str_solid(&format!("{} ms", previous_frame_length), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
-      let time_texture = renderer.create_texture_from_surface(&time_surface).unwrap();
-      renderer.copy(&time_texture, None, Some(sdl2::rect::Rect::new_unwrap(10, 25, time_surface.get_width(), time_surface.get_height())));
-    }
-
-    {
       let left_score_surface = font.render_str_solid(&format!("{}", left_score), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
       let left_score_texture = renderer.create_texture_from_surface(&left_score_surface).unwrap();
       renderer.copy(&left_score_texture, None, Some(sdl2::rect::Rect::new_unwrap((WIDTH/2 - left_score_surface.get_width() - 10) as i32, 25, left_score_surface.get_width(), left_score_surface.get_height())));
@@ -124,13 +114,6 @@ fn main() {
     }
 
     renderer.present();
-
-    let frame_end = sdl2::timer::get_ticks();
-    let frame_length = frame_end - frame_start;
-    previous_frame_length = frame_length;
-    if frame_length < MS_PER_FRAME {
-      sdl2::timer::delay(MS_PER_FRAME - frame_length);
-    }
   }
 
   sdl2_ttf::quit();
