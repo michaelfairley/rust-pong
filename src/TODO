@@ -1,4 +1,3 @@
-Extract FPS stuff
 Framerate independence (and disable vsync)
 Extract text rendering
 Extract keyboard handling
