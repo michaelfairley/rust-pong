@@ -1,5 +1,6 @@
 Framerate independence (and disable vsync)
 Extract text rendering
 Extract keyboard handling
-iOS
+Controller
 Rumble
+iOS
