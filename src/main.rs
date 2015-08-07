@@ -1,12 +1,11 @@
 extern crate sdl2;
 extern crate sdl2_ttf;
 
-use std::path::Path;
-
 pub mod ring;
 pub mod fps;
 pub mod paddle;
 pub mod ball;
+pub mod text;
 use ball::*;
 
 const WIDTH : u32 = 640;
@@ -33,7 +32,7 @@ fn main() {
   let mut left_score = 0;
   let mut right_score = 0;
 
-  let font = sdl2_ttf::Font::from_file(Path::new("OpenSans-Regular.ttf"), 20).unwrap();
+  let text = text::Text::new("OpenSans-Regular.ttf", 20);
 
   let mut fps = fps::FPS::new();
 
@@ -95,23 +94,10 @@ fn main() {
     renderer.fill_rect(right_paddle.to_sdl());
     renderer.fill_rect(ball.to_sdl());
 
-    {
-      let fps_surface = font.render_str_solid(&format!("{} fps", fps.average()), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
-      let fps_texture = renderer.create_texture_from_surface(&fps_surface).unwrap();
-      renderer.copy(&fps_texture, None, Some(sdl2::rect::Rect::new_unwrap(10, 10, fps_surface.get_width(), fps_surface.get_height())));
-    }
+    text.render(&mut renderer, &format!("{} fps", fps.average()), 10, 10);
 
-    {
-      let left_score_surface = font.render_str_solid(&format!("{}", left_score), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
-      let left_score_texture = renderer.create_texture_from_surface(&left_score_surface).unwrap();
-      renderer.copy(&left_score_texture, None, Some(sdl2::rect::Rect::new_unwrap((WIDTH/2 - left_score_surface.get_width() - 10) as i32, 25, left_score_surface.get_width(), left_score_surface.get_height())));
-    }
-
-    {
-      let right_score_surface = font.render_str_solid(&format!("{}", right_score), sdl2::pixels::Color::RGB(0xff, 0xff, 0xff)).unwrap();
-      let right_score_texture = renderer.create_texture_from_surface(&right_score_surface).unwrap();
-      renderer.copy(&right_score_texture, None, Some(sdl2::rect::Rect::new_unwrap((WIDTH / 2 + 10) as i32, 25, right_score_surface.get_width(), right_score_surface.get_height())));
-    }
+    text.render(&mut renderer, &format!("{}", left_score), (WIDTH / 2 - 20) as i32, 25);
+    text.render(&mut renderer, &format!("{}", right_score), (WIDTH / 2 + 10) as i32, 25);
 
     renderer.present();
   }

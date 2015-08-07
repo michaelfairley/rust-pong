@@ -1,5 +1,4 @@
 Framerate independence (and disable vsync)
-Extract text rendering
 Extract keyboard handling
 Controller
 Rumble
