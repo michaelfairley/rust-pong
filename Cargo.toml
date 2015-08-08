@@ -4,6 +4,6 @@ version = "0.1.0"
 authors = ["Michael Fairley <michaelfairley@gmail.com>"]
 
 [dependencies]
-sdl2 = "0.5"
-sdl2_ttf = "0.5.0"
+sdl2 = "0.6"
+sdl2_ttf = "0.6.0"
 rand = "0.3"
