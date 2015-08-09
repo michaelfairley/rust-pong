@@ -12,7 +12,10 @@ const WIDTH : u32 = 640;
 const HEIGHT : u32 = 480;
 
 fn main() {
-  let mut sdl_context = sdl2::init().video().unwrap();
+  let mut sdl_context = sdl2::init()
+    .video()
+    .game_controller()
+    .unwrap();
   sdl2_ttf::init();
 
   let window = sdl_context.window("Pong", 640, 480)
@@ -32,6 +35,9 @@ fn main() {
   let mut left_score = 0;
   let mut right_score = 0;
 
+  let owned_controller = sdl2::controller::GameController::open(0);
+  let controller = owned_controller.as_ref();
+
   let text = text::Text::new("OpenSans-Regular.ttf", 20);
 
   let mut fps = fps::FPS::new();
@@ -41,10 +47,16 @@ fn main() {
     for event in sdl_context.event_pump().poll_iter() {
       use sdl2::event::Event;
       use sdl2::keyboard::Keycode;
+      use sdl2::controller::Button;
 
       match event {
-        Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => running = false,
-        Event::KeyDown { keycode: Some(Keycode::R), ..} => {
+        Event::Quit {..}
+        | Event::KeyDown { keycode: Some(Keycode::Escape), .. }
+        | Event::ControllerButtonDown{ button: Button::Back, .. }
+        => running = false,
+        Event::KeyDown { keycode: Some(Keycode::R), ..}
+        | Event::ControllerButtonDown{ button: Button::Start, .. }
+        => {
           left_paddle = paddle::Paddle::new(paddle::Side::Left);
           right_paddle = paddle::Paddle::new(paddle::Side::Right);
           ball = Ball::new();
@@ -55,18 +67,24 @@ fn main() {
 
     {
       use sdl2::keyboard::Scancode;
+      use sdl2::controller::Axis;
+
+      let dead_zone = 4000;
+
+      let left_axis = controller.map(|c| c.get_axis(Axis::LeftY)).unwrap_or(0);
+      let right_axis = controller.map(|c| c.get_axis(Axis::RightY)).unwrap_or(0);
 
       let keystates = sdl_context.keyboard_state();
-      if keystates.is_scancode_pressed(Scancode::S) || keystates.is_scancode_pressed(Scancode::D) {
+      if keystates.is_scancode_pressed(Scancode::S) || keystates.is_scancode_pressed(Scancode::D) || left_axis > dead_zone {
         left_paddle.move_down();
       }
-      if keystates.is_scancode_pressed(Scancode::W) || keystates.is_scancode_pressed(Scancode::E)  {
+      if keystates.is_scancode_pressed(Scancode::W) || keystates.is_scancode_pressed(Scancode::E) || left_axis < -dead_zone {
         left_paddle.move_up();
       }
-      if keystates.is_scancode_pressed(Scancode::K) || keystates.is_scancode_pressed(Scancode::Down) {
+      if keystates.is_scancode_pressed(Scancode::K) || keystates.is_scancode_pressed(Scancode::Down) || right_axis > dead_zone {
         right_paddle.move_down();
       }
-      if keystates.is_scancode_pressed(Scancode::I) || keystates.is_scancode_pressed(Scancode::Up)  {
+      if keystates.is_scancode_pressed(Scancode::I) || keystates.is_scancode_pressed(Scancode::Up) || right_axis < -dead_zone {
         right_paddle.move_up();
       }
     }
